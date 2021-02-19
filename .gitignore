@@ -5,11 +5,13 @@ venv/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
+*.env
 
-### Django ###
+### Flask ###
 *.log
 *.pot
 *.pyc
+*.db
 
 ### PyCharm ###
 *.idea/

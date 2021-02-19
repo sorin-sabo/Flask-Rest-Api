@@ -13,7 +13,6 @@ class BookBasicSerializer(ModelSchema):
 class BookDetailSerializer(ModelSchema):
     class Meta(ModelSchema.Meta):
         model = Book
-        fields = '__all__'
 
 
 class BookListSerializer(ModelSchema):

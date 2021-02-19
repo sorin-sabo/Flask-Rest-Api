@@ -64,6 +64,9 @@ def response_with(response, value=None, error=None, headers=None, pagination=Non
     :rtype: json
     """
 
+    if headers is None:
+        headers = {}
+
     result = {}
 
     if value is not None:

@@ -1,4 +1,9 @@
-import os
+"""Flask configuration."""
+from os import environ, path
+from dotenv import load_dotenv
+
+basedir = path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
+load_dotenv(path.join(basedir, '.env'))
 
 
 class Config:
@@ -7,8 +12,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_DATABASE_URI = (
-        f"mysql+pymysql://{os.environ.get('username')}:{os.environ.get('password')}@"
-        f"{os.environ.get('host')}:{os.environ.get('port')}/{os.environ.get('database')}"
+        f"mysql+pymysql://{environ.get('DATABASE_USERNAME')}:{environ.get('DATABASE_PASSWORD')}@"
+        f"{environ.get('DATABASE_HOST')}:{environ.get('DATABASE_PORT')}/{environ.get('DATABASE_NAME')}"
     )
 
 
@@ -19,4 +24,3 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
-

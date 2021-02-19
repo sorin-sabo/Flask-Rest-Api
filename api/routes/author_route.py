@@ -9,7 +9,6 @@ author_routes = Blueprint("author_routes", __name__)
 
 
 @author_routes.route('/', methods=['POST'])
-@jwt_required
 def create_author():
     try:
         data = request.get_json()
@@ -40,7 +39,7 @@ def get_author_detail(author_id):
     return response_with(resp.SUCCESS_200, value={"author": author})
 
 
-@author_routes.route('/<int:id>', methods=['PUT'])
+@author_routes.route('/<int:author_id>', methods=['PUT'])
 @jwt_required
 def update_author_detail(author_id):
     data = request.get_json()

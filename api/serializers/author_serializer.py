@@ -18,7 +18,6 @@ class AuthorBasicSerializer(ModelSchema):
 class AuthorDetailSerializer(ModelSchema):
     class Meta(ModelSchema.Meta):
         model = Author
-        fields = '__all__'
 
 
 class AuthorListSerializer(ModelSchema):
