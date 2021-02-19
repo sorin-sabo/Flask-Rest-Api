@@ -2,7 +2,7 @@ from flask import request, Blueprint
 from flask_jwt_extended import jwt_required
 
 from api.models import Author
-from api.serializers import AuthorListSerializer, AuthorDetailSerializer
+from api.serializers import AuthorListSerializer, AuthorDetailSerializer, AuthorBasicSerializer
 from api.utils import db, ValidationException, response_with, responses as resp
 
 author_routes = Blueprint("author_routes", __name__)
@@ -19,6 +19,15 @@ def create_author():
         return response_with(resp.SUCCESS_201, value={"author": result})
     except ValidationException:
         return response_with(resp.BAD_REQUEST_400)
+
+
+@author_routes.route('/basic/list', methods=['GET'])
+def get_author_basic_list():
+    fetched = Author.query.all()
+    author_schema = AuthorBasicSerializer(many=True)
+    authors = author_schema.dump(fetched)
+
+    return response_with(resp.SUCCESS_200, value={"authors": authors})
 
 
 @author_routes.route('/', methods=['GET'])

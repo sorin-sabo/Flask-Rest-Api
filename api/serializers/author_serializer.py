@@ -4,7 +4,7 @@ from api.models import Author
 
 
 class AuthorBasicSerializer(ModelSchema):
-    name = fields.Method(deserialize="_get_name")
+    name = fields.Method(serialize="_get_name")
 
     class Meta(ModelSchema.Meta):
         model = Author

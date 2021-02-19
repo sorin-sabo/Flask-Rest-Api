@@ -18,6 +18,17 @@ It is assumed that:
     ```bash
     pip install -r requirements.txt
     ```
+
+3.  **Add environment variables**
+    - Create a file named `.env` in root directory
+    - Add and fill next environment variables with your local database config:
+        ```.dotenv
+        DATABASE_USERNAME=
+        DATABASE_PASSWORD=
+        DATABASE_NAME=
+        DATABASE_PORT=
+        DATABASE_HOST=
+        ```
     
 ## Run
 
