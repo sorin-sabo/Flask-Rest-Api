@@ -1,19 +1,22 @@
 from flask import request, Blueprint
-from flask_jwt_extended import jwt_required
 
 from api.models import Author
 from api.serializers import AuthorListSerializer, AuthorDetailSerializer, AuthorBasicSerializer
-from api.utils import db, ValidationException, response_with, responses as resp
+from api.utils import db, ValidationException, response_with, responses as resp, requires_auth
 
 author_routes = Blueprint("author_routes", __name__)
 
 
 @author_routes.route('/', methods=['POST'])
+@requires_auth
 def create_author():
+    """
+    Creates a new author.
+    """
     try:
         data = request.get_json()
         author_schema = AuthorDetailSerializer()
-        author = author_schema.load(data)
+        author = author_schema.load(data, transient=True)
         result = author_schema.dump(author.create())
 
         return response_with(resp.SUCCESS_201, value={"author": result})
@@ -22,6 +25,7 @@ def create_author():
 
 
 @author_routes.route('/basic/list', methods=['GET'])
+@requires_auth
 def get_author_basic_list():
     fetched = Author.query.all()
     author_schema = AuthorBasicSerializer(many=True)
@@ -31,6 +35,7 @@ def get_author_basic_list():
 
 
 @author_routes.route('/', methods=['GET'])
+@requires_auth
 def get_author_list():
     fetched = Author.query.all()
     author_schema = AuthorListSerializer(many=True)
@@ -40,6 +45,7 @@ def get_author_list():
 
 
 @author_routes.route('/<int:author_id>', methods=['GET'])
+@requires_auth
 def get_author_detail(author_id):
     fetched = Author.query.get_or_404(author_id)
     author_schema = AuthorDetailSerializer()
@@ -49,7 +55,7 @@ def get_author_detail(author_id):
 
 
 @author_routes.route('/<int:author_id>', methods=['PUT'])
-@jwt_required
+@requires_auth
 def update_author_detail(author_id):
     data = request.get_json()
     get_author = Author.query.get_or_404(author_id)
@@ -64,6 +70,7 @@ def update_author_detail(author_id):
 
 
 @author_routes.route('/<int:author_id>', methods=['PATCH'])
+@requires_auth
 def modify_author_detail(author_id):
     data = request.get_json()
     get_author = Author.query.get(author_id)
@@ -83,6 +90,7 @@ def modify_author_detail(author_id):
 
 
 @author_routes.route('/<int:author_id>', methods=['DELETE'])
+@requires_auth
 def delete_author(author_id):
     author = Author.query.get_or_404(author_id)
     db.session.delete(author)

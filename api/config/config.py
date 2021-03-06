@@ -1,5 +1,6 @@
 """Flask configuration."""
 from os import environ, path
+
 from dotenv import load_dotenv
 
 basedir = path.dirname(path.dirname(path.dirname(path.abspath(__file__))))
@@ -24,3 +25,12 @@ class ProductionConfig(Config):
 
 class DevelopmentConfig(Config):
     DEBUG = True
+
+
+class Settings:
+    OAUTH_DOMAIN = environ.get("OAUTH_DOMAIN")
+    AUTH0_ACCESS_AUDIENCE = environ.get("OAUTH_GUEST_ID")
+    AUTH0_ID_AUDIENCE = environ.get("OAUTH_CLIENT_ID")
+
+
+settings = Settings()

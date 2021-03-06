@@ -1,5 +1,6 @@
-from marshmallow import fields
+from marshmallow import fields, validate
 from marshmallow_sqlalchemy import ModelSchema
+
 from api.models import Author
 
 
@@ -16,6 +17,10 @@ class AuthorBasicSerializer(ModelSchema):
 
 
 class AuthorDetailSerializer(ModelSchema):
+    first_name = fields.Str(required=True, validate=[validate.Length(min=4, max=250)])
+    last_name = fields.Str(required=True, validate=[validate.Length(min=4, max=250)])
+    avatar = fields.Str(required=False, validate=[validate.Length(min=4, max=250)])
+
     class Meta(ModelSchema.Meta):
         model = Author
 
