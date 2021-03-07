@@ -1,4 +1,4 @@
-# Flask Sample API
+# Flask REST API
     1. Functionalities covered:
     -   Rest API CRUD opertaions;
     -   Oauth2 integration handling both id and access token;

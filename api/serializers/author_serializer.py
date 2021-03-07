@@ -23,6 +23,7 @@ class AuthorDetailSerializer(ModelSchema):
 
     class Meta(ModelSchema.Meta):
         model = Author
+        fields = ('id', 'first_name', 'last_name', 'avatar', 'created_by', 'updated_by')
 
 
 class AuthorListSerializer(ModelSchema):

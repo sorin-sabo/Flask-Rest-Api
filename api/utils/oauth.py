@@ -97,7 +97,7 @@ def requires_auth(f):
 
         if token_type == 'id_token':
             user = get_token_user(payload)
-            _request_ctx_stack.top.current_user = user
+            _request_ctx_stack.top.user = user
 
         return f(*args, **kwargs)
 
