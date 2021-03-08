@@ -1,1 +1,1 @@
-from .author_route import author_routes
+from .author_route import author_ns

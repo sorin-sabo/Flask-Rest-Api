@@ -1,30 +1,34 @@
-from flask import request, Blueprint
+from flask import request
+from flask_restx import Resource
 
 from api.models import Author
+from api.app import api
 from api.serializers import (
     AuthorListSerializer,
     AuthorDetailSerializer,
     AuthorBasicSerializer,
+    author_detail
 )
 from api.utils import (
-    db,
-    ValidationException,
     response_with,
     responses as resp,
     requires_auth,
-    get_current_user
+    get_current_user,
+    db
 )
 
-author_routes = Blueprint("author_routes", __name__)
+author_ns = api.namespace('authors', description='Operations related to authors.')
 
 
-@author_routes.route('/', methods=['POST'])
-@requires_auth
-def create_author():
-    """
-    Creates a new author.
-    """
-    try:
+@author_ns.route('/')
+class AuthorsCollection(Resource):
+    @requires_auth
+    @api.expect(author_detail)
+    def post(self):
+        """
+        Creates a new author.
+        """
+
         data = request.get_json()
         user = get_current_user()
         user_id = user.id if user is not None else None
@@ -34,67 +38,94 @@ def create_author():
         result = author_schema.dump(author.create())
 
         return response_with(resp.SUCCESS_201, value={"author": result})
-    except ValidationException:
-        return response_with(resp.BAD_REQUEST_400)
+
+    @requires_auth
+    def get(self):
+        """
+        Returns list of authors.
+        """
+
+        fetched = Author.query.all()
+        author_schema = AuthorListSerializer(many=True)
+        authors = author_schema.dump(fetched)
+
+        return response_with(resp.SUCCESS_200, value={"authors": authors})
 
 
-@author_routes.route('/basic/list', methods=['GET'])
-@requires_auth
-def get_author_basic_list():
-    fetched = Author.query.all()
-    author_schema = AuthorBasicSerializer(many=True)
-    authors = author_schema.dump(fetched)
+@author_ns.route('/basic')
+class AuthorsBasicCollection(Resource):
+    @requires_auth
+    def get(self):
+        """
+        Returns basic list of authors.
+        """
 
-    return response_with(resp.SUCCESS_200, value={"authors": authors})
+        fetched = Author.query.all()
+        author_schema = AuthorBasicSerializer(many=True)
+        authors = author_schema.dump(fetched)
 
-
-@author_routes.route('/', methods=['GET'])
-@requires_auth
-def get_author_list():
-    fetched = Author.query.all()
-    author_schema = AuthorListSerializer(many=True)
-    authors = author_schema.dump(fetched)
-
-    return response_with(resp.SUCCESS_200, value={"authors": authors})
+        return response_with(resp.SUCCESS_200, value={"authors": authors})
 
 
-@author_routes.route('/<int:author_id>', methods=['GET'])
-@requires_auth
-def get_author_detail(author_id):
-    fetched = Author.query.get_or_404(author_id)
-    author_schema = AuthorDetailSerializer()
-    author = author_schema.dump(fetched)
+# noinspection PyUnresolvedReferences
+@author_ns.route('/<int:author_id>')
+class AuthorDetail(Resource):
+    @requires_auth
+    @api.response(404, 'Author not found.')
+    def get(self, author_id):
+        """
+        Returns an author.
+        """
 
-    return response_with(resp.SUCCESS_200, value={"author": author})
+        fetched = Author.query.get_or_404(author_id)
+        author_schema = AuthorDetailSerializer()
+        author = author_schema.dump(fetched)
 
+        return response_with(resp.SUCCESS_200, value={"author": author})
 
-@author_routes.route('/<int:author_id>', methods=['PUT'])
-@requires_auth
-def update_author_detail(author_id):
-    """
-    Update author by id
-    """
+    @requires_auth
+    @api.response(404, 'Author not found.')
+    def put(self, author_id):
+        """
+        Updates an author.
 
-    data = request.get_json()
-    existing_author = Author.query.get_or_404(author_id)
+        Use this method to change the first name ans last name of an author.
 
-    author_schema = AuthorDetailSerializer()
-    author_schema.load(data, transient=True)
+        * Send a JSON object with the new first_name and last_name in the request body.
 
-    existing_author.first_name = data['first_name']
-    existing_author.last_name = data['last_name']
-    db.session.add(existing_author)
-    db.session.commit()
-    author = author_schema.dump(existing_author)
+        ```
+        {
+          "first_name": "New Author First Name",
+          "last_name": "New Author Last Name"
+        }
+        ```
 
-    return response_with(resp.SUCCESS_200, value={"author": author})
+        * Specify the ID of the author to modify in the request URL path.
+        """
 
+        data = request.get_json()
+        existing_author = Author.query.get_or_404(author_id)
 
-@author_routes.route('/<int:author_id>', methods=['DELETE'])
-@requires_auth
-def delete_author(author_id):
-    author = Author.query.get_or_404(author_id)
-    db.session.delete(author)
-    db.session.commit()
+        author_schema = AuthorDetailSerializer()
+        author_schema.load(data, transient=True)
 
-    return response_with(resp.SUCCESS_204)
+        existing_author.first_name = data['first_name']
+        existing_author.last_name = data['last_name']
+        db.session.add(existing_author)
+        db.session.commit()
+        author = author_schema.dump(existing_author)
+
+        return response_with(resp.SUCCESS_200, value={"author": author})
+
+    @requires_auth
+    @api.response(204, 'Author successfully deleted.')
+    def delete(self, author_id):
+        """
+        Deletes an author.
+        """
+
+        author = Author.query.get_or_404(author_id)
+        db.session.delete(author)
+        db.session.commit()
+
+        return response_with(resp.SUCCESS_204)

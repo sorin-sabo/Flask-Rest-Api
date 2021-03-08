@@ -12,6 +12,11 @@ class Config:
     TESTING = False
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ECHO = False
+    SWAGGER_UI_OAUTH_CLIENT_ID = environ.get("OAUTH_CLIENT_ID")
+    SWAGGER_UI_OPERATION_ID = True
+    SWAGGER_UI_REQUEST_DURATION = True
+    SWAGGER_UI_OAUTH_REALM = '-'
+    SWAGGER_UI_OAUTH_APP_NAME = 'Flask Rest API'
     SQLALCHEMY_DATABASE_URI = (
         f"mysql+pymysql://{environ.get('DATABASE_USERNAME')}:{environ.get('DATABASE_PASSWORD')}@"
         f"{environ.get('DATABASE_HOST')}:{environ.get('DATABASE_PORT')}/{environ.get('DATABASE_NAME')}"

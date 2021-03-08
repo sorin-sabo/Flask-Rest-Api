@@ -1,7 +1,9 @@
 from marshmallow import fields, validate
 from marshmallow_sqlalchemy import ModelSchema
+from flask_restx import fields as x_fields
 
 from api.models import Author
+from api.app import api
 
 
 class AuthorBasicSerializer(ModelSchema):
@@ -30,3 +32,11 @@ class AuthorListSerializer(ModelSchema):
     class Meta(ModelSchema.Meta):
         model = Author
         fields = ('id', 'first_name', 'last_name', 'avatar')
+
+
+author_detail = api.model('Author', {
+    'id': x_fields.Integer(readOnly=True, description='The unique identifier of an author'),
+    'first_name': x_fields.String(required=True, description='Author first name'),
+    'last_name': x_fields.String(required=True, description='Author last name'),
+    'avatar': x_fields.String(required=True, description='Author avatar image'),
+})
