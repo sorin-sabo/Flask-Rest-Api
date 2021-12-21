@@ -2,8 +2,10 @@
     1. Functionalities covered:
     -   Rest API CRUD opertaions;
     -   Oauth2 integration handling both id and access token;
-    -   Validation for request data using schemas;
+    -   Validation for request data using dtos and schemas;
+    -   Unit tests with a mixin of unittest & pytest
     -   API docs with swagger;
+    -   Code quality assured with pylint;
     2. Programming principles covered:
     -   Best practices in Flask;
     -   Geneneric response format;
