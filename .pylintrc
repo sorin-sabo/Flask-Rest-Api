@@ -36,3 +36,7 @@ include-ids=yes
 # * warning notes in the code like FIXME, BUG, TODO
 # * PEP 263: source code with non ascii character but no encoding declaration
 #
+[MISCELLANEOUS]
+
+# List of note tags to take in consideration, separated by a comma.
+notes=FIXME,BUG,TODO
